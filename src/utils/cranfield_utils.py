@@ -1,6 +1,8 @@
 from typing import List
+from ..logging import LoggerFactory
 from .collection import Collection
 
+LOOGER = LoggerFactory('SRI').getChild('CranfieldTools')
 
 class Document:
     def __init__(self, author: str, title: str, text: str):
@@ -30,6 +32,7 @@ def __parse_query(query: str) -> str:
     return query_text
 
 def read_documents(file: str) -> Collection:
+    LOOGER.info(f'Parsing documents on file {file}')
     with open(file, 'r') as f:
         all_documents_str: str = ''.join(f.readlines())
     documents: List[str] = __get_documents(all_documents_str)

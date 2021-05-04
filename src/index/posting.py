@@ -4,7 +4,7 @@ class Posting:
         self.__document_index: int = document_index
         self.__term_frequency: int = 1
     
-    def __eq__(self, other: Posting):
+    def __eq__(self, other: 'Posting'):
         return self.__document_index == other.document_index
     
     def increment_frequency(self, amount: int = 1):
