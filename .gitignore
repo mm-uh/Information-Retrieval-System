@@ -123,3 +123,8 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+#Cransfield dataset
+cran.all.1400
+cran.qry
+cranqrel
