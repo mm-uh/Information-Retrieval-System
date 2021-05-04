@@ -1,5 +1,6 @@
 from typing import List
 
+
 class Collection:
     def __init__(self, documents: List[str]):
         self.documents = documents
@@ -9,3 +10,21 @@ class Collection:
     
     def __len__(self) -> int:
         return len(self.documents)
+    
+    def __iter__(self) -> CollectionIterator:
+        return CollectionIterator(self)
+    
+class CollectionIterator:
+    def __init__(self, collection: Collection):
+        self.__collection: Collection = collection
+        self.__index: int
+    
+    def __next__(self) -> str:
+        if self.__index == len(self.__collection): 
+            raise StopIteration
+        self.__index += 1
+        return self.__collection[self.__index]
+
+
+    
+
