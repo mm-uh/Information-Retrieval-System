@@ -11,7 +11,7 @@ class Collection:
     def __len__(self) -> int:
         return len(self.documents)
     
-    def __iter__(self) -> CollectionIterator:
+    def __iter__(self) -> 'CollectionIterator':
         return CollectionIterator(self)
     
 class CollectionIterator:
