@@ -6,7 +6,13 @@ class Posting:
     
     def __eq__(self, other: 'Posting'):
         return self.__document_index == other.document_index
+
+    def __lt__(self, other: 'Posting'):
+        return self.__document_index < other.document_index
     
+    def __le__(self, other: 'Posting'):
+        return self.__document_index <= other.document_index
+
     def increment_frequency(self, amount: int = 1):
         self.__term_frequency += amount
     
