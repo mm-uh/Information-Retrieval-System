@@ -1,17 +1,9 @@
 from typing import List
 from ..logging import LoggerFactory
-from .collection import Collection
+from .collection import Collection, Document
 
 LOOGER = LoggerFactory('SRI').getChild('CranfieldTools')
 
-class Document:
-    def __init__(self, author: str, title: str, text: str):
-        self.author = author
-        self.title = title
-        self.text = text
-    
-    def __repr__(self) -> str:
-        return self.text
 
 
 def read_query_file(file: str) -> Collection: 
