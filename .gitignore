@@ -125,7 +125,5 @@ venv.bak/
 dmypy.json
 
 #Cransfield dataset
-cran.all.1400
-cran.qry
-cranqrel
+datasets/
 *.vsm
