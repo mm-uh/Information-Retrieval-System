@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Dict
 from ..logging import LoggerFactory
-from .collection import Collection, Document
+from ..data.collection import Collection, Document
+from collections import defaultdict
 
 LOOGER = LoggerFactory('SRI').getChild('CranfieldTools')
 
@@ -29,7 +30,7 @@ def read_documents(file: str) -> Collection:
         all_documents_str: str = ''.join(f.readlines())
     documents: List[str] = __get_documents(all_documents_str)
     documents: List[Document] = list(map(__parse_document, documents))
-    return documents
+    return Collection(documents)
 
 def __get_documents(all_documents_str: str) -> List[str]:
     return list(filter(lambda x : x != '', all_documents_str.split('.I')))
@@ -48,4 +49,12 @@ def __parse_document(document: str) -> Document:
     return Document(author, title, text)
 
 
+def get_queries_document_relation(file: str, treshold: int) -> Dict[int, List[int]]:
+    relations: Dict[int, List[int]] = defaultdict(lambda : list())
+    with open(file, 'r') as f:
+        for line in f.readlines():
+            query, document, relation = map(int, line.split())
+            if relation <= treshold:
+                relations[query - 1].append(document - 1)
+    return relations
 
