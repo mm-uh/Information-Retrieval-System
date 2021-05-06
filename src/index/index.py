@@ -12,6 +12,7 @@ LOGGER = LoggerFactory('SRI').getChild('Indexer')
 class Index:
     def __init__(self, collection: Collection):
         self.__index: Dict[str, List[Posting]] = {}
+        self.__max_frequecy_in_document: Dict[int, int] = [0 for _ in range(len(collection))]
         LOGGER.info('Indexed started')
         for document_index, document in enumerate(collection):
             LOGGER.debug('Indexing document')
@@ -19,23 +20,29 @@ class Index:
 
     def __process_document(self, document_index: int, document: str):
         words: List[str] = preprocess_data(document)
+        max_frequency:int = 0
         for word in words:
             LOGGER.debug(f'Updating word "{word}"" in index')
-            self.__update_index_entry(document_index, word)
+            frequency: int = self.__update_index_entry(document_index, word)
+            max_frequency = max(max_frequency, frequency)
+        self.__max_frequecy_in_document[document_index] = max_frequency
 
-    def __update_index_entry(self, document_index: int, word: str):
+    def __update_index_entry(self, document_index: int, word: str) -> int:
         posting_list: List[Posting]
         try:
             posting_list = self.__index[word]
             last_posting: Posting = posting_list[-1]
             if last_posting.document_index == document_index:
                 last_posting.increment_frequency()
+                return last_posting.frequency
             else:
                 posting_list.append(Posting(document_index))
+                return 1
         except KeyError:
             LOGGER.debug('Creating new index entry')
             posting_list = [Posting(document_index)]
             self.__index[word] = posting_list
+            return 1
 
     def get_posting_list(self, word: str) -> Posting:
         return self.__index[word]
@@ -51,14 +58,15 @@ class Index:
             return None
         return postings[posting_index]
 
-    def get_most_repeated_word_in_document(self, document_index: int) -> (List[str], int):
-        most_repeated_words: List[str]
-        frequency: int = 0
-        for word in self.__index.keys():
-            posting = self.get_posting(word, document_index)
-            if posting is not None:
-                if posting.frequency > frequency:
-                    frequency, most_repeated_words = posting.frequency, [word]
-                elif posting.frequency == frequency:
-                    most_repeated_words.append(word)
-        return most_repeated_words, frequency
+    def get_most_repeated_word_in_document(self, document_index: int) -> int:
+        return self.__max_frequecy_in_document[document_index]
+    
+    def filter_non_indexed_words(self, words: List[str]) -> List[str]:
+        filtered_words: List[str] = []
+        for word in words:
+            try:
+                _ = self.__index[word]
+                filtered_words.append(word)
+            except KeyError:
+                continue
+        return filtered_words
