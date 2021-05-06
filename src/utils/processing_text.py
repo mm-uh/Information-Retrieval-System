@@ -6,6 +6,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.stem import PorterStemmer
 from nltk import pos_tag
 from string import punctuation
+from .utils import memoized
 import nltk
 
 nltk.data.path.append('/media/kid/Data/nltk_data')
@@ -20,7 +21,7 @@ CONVERT_POS = {
 def tokenize_text(text: str) -> List[str]:
     return word_tokenize(text, language='english')
 
-
+@memoized
 def preprocess_data(text: str) -> List[str]:
     words: List[str] = tokenize_text(text)
     lemmatized_words: List[str] = __lemmatize_text(words)
