@@ -7,6 +7,7 @@ from ..utils.utils import memoized
 from ..logging.logging import LoggerFactory
 from math import log10, sqrt
 from collections import Counter
+import pickle
 
 LOGGER = LoggerFactory('SRI').getChild('VectorSpaceModel')
 Vector = TypeVar('Vector')
@@ -18,21 +19,27 @@ class VectorSpaceModel:
         self.__collection: Collection = collection
         self.__index: Index = Index(collection)
         self.__relevant_treshold: int = relevant_treshold
+        self.__document_vectors: List[Vector] = [self.__create_document_vector(
+            index) for index in range(len(self.__collection))]
 
-    def query(self, query: str) -> List[Document]:
+    def query(self, query: str) -> List[int]:
         LOGGER.debug("Querying {query}")
         scores: List[(float, int)] = []
         for index in range(len(self.__collection)):
             score: float = self.__get_score(query, index)
             scores.append((score, index))
 
-        LOGGER.debug("Selecting best socores") 
-        sorted_scores: List[(float, int)] = sorted(scores, reverse = True)
-        return sorted_scores[:self.__relevant_treshold]
+        LOGGER.debug("Selecting best socores")
+        sorted_scores: List[(float, int)] = sorted(scores, reverse=True)
+        indexes = []
+        for i in range(self.__relevant_treshold):
+            indexes.append(sorted_scores[i][1])
+        return indexes
 
     def __get_score(self, query: str, document_index: int) -> float:
         LOGGER.debug("Computing score")
-        document_vector: Vector = self.__create_document_vector(document_index)
+        # document_vector: Vector = self.__create_document_vector(document_index)
+        document_vector: Vector = self.__document_vectors[document_index]
         document_vector = self.__normalize_vector(document_vector)
         query_vector: Vector = self.__create_query_vector(query)
         return self.__compute_similarity(query_vector, document_vector)
@@ -81,16 +88,23 @@ class VectorSpaceModel:
         return {
             word: self.__compute_query_weight(word, frequencies[word], max_frequency) for word in query_words}
 
-    def __compute_query_weight(self, word:str, frequency: float, max_frequency: float) -> float:
-        tf: float = (SMOOTH_VALUE + (1 - SMOOTH_VALUE) * frequency) / max_frequency
+    def __compute_query_weight(self, word: str, frequency: float, max_frequency: float) -> float:
+        tf: float = (SMOOTH_VALUE + (1 - SMOOTH_VALUE)
+                     * frequency) / max_frequency
         idf: float = self.__get_idf(word)
         return tf * idf
 
-    @memoized
     def __create_document_vector(self, document_index: int) -> Vector:
-        LOGGER.debug("Creating document vector") 
+        LOGGER.debug("Creating document vector")
         document: Document = self.__collection[document_index]
         LOGGER.debug('Preprocessing document')
         document_words: List[str] = preprocess_data(str(document))
         return {word: self.__get_weight(
             word, document_index) for word in document_words}
+
+
+def save_model(model, filename):
+    pickle.dump(model, open(filename, 'wb'))
+
+def load_model(filename):
+    return pickle.load(open(filename, 'rb'))
