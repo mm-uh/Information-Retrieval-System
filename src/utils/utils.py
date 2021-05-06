@@ -18,6 +18,9 @@ def binary_search(collection: List[T], value: T) -> int:
     return index
 
 
+def average(values: List[T]) -> float:
+    length = len(values)
+    return sum(values) / length
         
    
 class memoized(object):
@@ -45,4 +48,3 @@ class memoized(object):
     def __get__(self, obj, objtype):
         '''Support instance methods.'''
         return functools.partial(self.__call__, obj)
-      
