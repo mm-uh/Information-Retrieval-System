@@ -16,14 +16,17 @@ SMOOTH_VALUE = 0.5
 
 class VectorSpaceModel:
     def __init__(self, collection: Collection, relevant_treshold: int = 10):
+        LOGGER.info("Initializing Model")
         self.__collection: Collection = collection
+        LOGGER.info('Creating Index')
         self.__index: Index = Index(collection)
         self.__relevant_treshold: int = relevant_treshold
+        LOGGER.info('Computing vectors for documents')
         self.__document_vectors: List[Vector] = [self.__create_document_vector(
             index) for index in range(len(self.__collection))]
 
     def query(self, query: str) -> List[int]:
-        LOGGER.debug("Querying {query}")
+        LOGGER.info(f"Querying {query}")
         scores: List[(float, int)] = []
         for index in range(len(self.__collection)):
             score: float = self.__get_score(query, index)
@@ -38,7 +41,6 @@ class VectorSpaceModel:
 
     def __get_score(self, query: str, document_index: int) -> float:
         LOGGER.debug("Computing score")
-        # document_vector: Vector = self.__create_document_vector(document_index)
         document_vector: Vector = self.__document_vectors[document_index]
         document_vector = self.__normalize_vector(document_vector)
         query_vector: Vector = self.__create_query_vector(query)
@@ -104,7 +106,9 @@ class VectorSpaceModel:
 
 
 def save_model(model, filename):
+    LOGGER.info(f'Saving model to file {filename}')
     pickle.dump(model, open(filename, 'wb'))
 
 def load_model(filename):
+    LOGGER.info(f'Loading model from file {filename}')
     return pickle.load(open(filename, 'rb'))
