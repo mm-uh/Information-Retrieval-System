@@ -28,10 +28,10 @@ class CollectionIterator:
 
 
 class Document:
-    def __init__(self, author: str, title: str, text: str):
-        self.author = author
-        self.title = title
-        self.text = text
-    
+    def __init__(self):
+        self.author: str = ''
+        self.title: str = ''
+        self.abstract: str = ''
+
     def __repr__(self) -> str:
-        return self.text
+        return f'{self.title}\n{self.abstract}\n{self.author}'
