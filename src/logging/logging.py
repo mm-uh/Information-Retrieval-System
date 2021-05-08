@@ -7,13 +7,13 @@ formatF  = f'%(asctime)s - %(levelname)s - %(name)s - %(method)s - %(message)s'
 
 def LoggerFactory(name="root", log=False):
     '''
-    Create a custom logger to use colors in the logs
+    Create a custom #LOGGER to use colors in the logs
     '''
-    logging.setLoggerClass(Logger)
-    if log:
-        logging.basicConfig(format=formatF, datefmt=datefmt, filename='./logs/log.log', filemode='w')
-    else:
-        logging.basicConfig(format=formatC, datefmt=datefmt)
+    # if log:
+    #     logging.basicConfig(format=formatF, datefmt=datefmt, filename='./logs/log.log', filemode='w')
+    # else:
+    # logging.basicConfig(format=formatC, datefmt=datefmt)
+    logging.basicConfig()
     return logging.getLogger(name=name)
 
 
