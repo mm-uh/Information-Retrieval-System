@@ -2,6 +2,11 @@
 
 El proyecto esta compuesto por dos partes el SRI que puede ejecutarse en una modalidad para evaluarse sobre una colección específica o como servicio web para utilizar la aplicación web Moogle.
 
+En caso que desee instalar todas las dependencias del proyecto y cuenta con la herramienta make, npm y python, puede correr el siguiente comando:
+```
+make build-deps
+```
+
 ## SRI
 
 Para ejecutar el SRI debe tener instalado los paquetes
